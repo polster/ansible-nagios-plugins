@@ -1,0 +1,30 @@
+---
+
+# Packages needed in order to build Nagios plugins from source,
+# to be removed after build completion
+ansible_nagios_plugins_package_list_build:
+  - gcc
+  - gd
+  - gd-devel
+  - make
+  - automake
+  - autoconf
+
+# Packages needed in order to run the Nagios plugins
+ansible_nagios_plugins_package_list_run:
+  - glibc
+  - glibc-common
+  - net-snmp
+  - m4
+  - gettext
+  - wget
+  - gettext
+
+# The working dir
+ansible_nagios_plugins_working_dir: "/tmp/ansible-nagios-plugins"
+
+# The Nagios installation path
+ansible_nagios_plugins_nagios_path: "/usr/local/nagios"
+
+# The NRPE plugins check command
+ansible_nagios_plugins_check_command: "{{ ansible_nagios_plugins_nagios_path_libexec }}/check_nrpe"

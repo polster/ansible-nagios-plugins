@@ -1,0 +1,66 @@
+---
+
+- name: "Ensure the working dir is present"
+  file:
+    path: "{{ ansible_nagios_plugins_working_dir }}"
+    state: directory
+
+- name: "Ensure the required build packages are present"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ ansible_nagios_plugins_package_list_build }}"
+
+- name: "Ensure the required run packages are present"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ ansible_nagios_plugins_package_list_run }}"
+
+- name: "Download Nagios plugins source"
+  get_url:
+    url: "{{ ansible_nagios_plugins_download_url }}/{{ ansible_nagios_plugins_download_file }}"
+    dest: "{{ ansible_nagios_plugins_working_dir }}/{{ ansible_nagios_plugins_download_file }}"
+
+- name: "Extract downloaded source file"
+  command: "tar xzf {{ ansible_nagios_plugins_download_file }}"
+  args:
+    chdir: "{{ ansible_nagios_plugins_working_dir }}"
+
+- name: "Set tools setup"
+  command: "./tools/setup"
+  args:
+    chdir: "{{ ansible_nagios_plugins_working_dir }}/{{ ansible_nagios_plugins_download_source_dir }}"
+
+- name: "Set compile configuration"
+  command: "./configure"
+  args:
+    chdir: "{{ ansible_nagios_plugins_working_dir }}/{{ ansible_nagios_plugins_download_source_dir }}"
+
+- name: "Compile Nagios plugin sources"
+  make:
+    chdir: "{{ ansible_nagios_plugins_working_dir }}/{{ ansible_nagios_plugins_download_source_dir }}"
+
+- name: "Install binaries"
+  make:
+    chdir: "{{ ansible_nagios_plugins_working_dir }}/{{ ansible_nagios_plugins_download_source_dir }}"
+    target: "install"
+  notify:
+    - Run NRPE plugin check
+    - Assert NRPE plugin check was successful
+
+- name: "Deploy version file containing the current version"
+  template:
+    src: "nagios-plugins.version.j2"
+    dest: "{{ ansible_nagios_plugins_nagios_path }}/nagios-plugins.version"
+
+- name: "Ensure the no longer needed build packages are absent"
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ ansible_nagios_plugins_package_list_build }}"
+
+- name: "Cleanup"
+  file:
+    path: "{{ ansible_nagios_plugins_working_dir }}"
+    state: absent

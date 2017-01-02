@@ -1,0 +1,10 @@
+---
+
+# The NRPE version
+ansible_nagios_plugins_version: "2.1.4"
+
+# The download URL containing the path where the {{ ansible_nagios_plugins_download_file }} can be downloaded
+ansible_nagios_plugins_download_url: "https://github.com/nagios-plugins/nagios-plugins/archive"
+
+# Allows to force a re-installation
+ansible_nagios_plugins_reinstall_force: false

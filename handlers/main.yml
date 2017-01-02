@@ -1,0 +1,12 @@
+---
+
+- name: "Run NRPE plugin check"
+  shell: "{{ ansible_nagios_nrpe_check_command }} -H 127.0.0.1 -c check_load"
+  register: nrpe_plugin_check_result
+  changed_when: False
+
+- name: "Assert NRPE plugin check was successful"
+  assert:
+    that:
+      - "nrpe_plugin_check_result.rc == 0"
+      - "'OK - load average' in nrpe_plugin_check_result.stdout"

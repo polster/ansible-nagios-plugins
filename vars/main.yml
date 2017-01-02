@@ -1,0 +1,7 @@
+---
+
+# The download file name
+ansible_nagios_plugins_download_file: "release-{{ ansible_nagios_plugins_version }}.tar.gz"
+
+# The name of the dir containing the sources (corresponds to the extracted dir name)
+ansible_nagios_plugins_download_source_dir: "nagios-plugins-release-{{ ansible_nagios_plugins_version }}"

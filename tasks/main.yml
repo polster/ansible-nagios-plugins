@@ -1,0 +1,17 @@
+---
+
+- include_vars: "RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+
+- name: "Retrieve currently installed version"
+  shell: "grep nagios_plugins_version= {{ ansible_nagios_plugins_nagios_path }}/nagios-plugins.version | cut -d'=' -f2-"
+  register: nagios_plugins_version_installed
+  changed_when: False
+  ignore_errors: yes
+
+- name: "Register trigger if Nagios plugins installation should be berformed"
+  set_fact:
+    nagios_plugins_install: ansible_nagios_plugins_reinstall_force or nagios_plugins_version_installed.stdout != "{{ ansible_nagios_plugins_version }}"
+
+- include: install-plugins.yml
+  when: nagios_plugins_install
