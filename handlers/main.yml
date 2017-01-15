@@ -1,7 +1,7 @@
 ---
 
 - name: "Run NRPE plugin check"
-  shell: "{{ ansible_nagios_nrpe_check_command }} -H 127.0.0.1 -c check_load"
+  shell: "{{ ansible_nagios_nrpe_check_command }} -H 127.0.0.1 -c {{ ansible_nagios_plugins_nrpe_plugin_check_command }}"
   register: nrpe_plugin_check_result
   changed_when: False
 
